@@ -51,6 +51,9 @@
                         <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-8 col-lg-offset-2 scroll-me"
                             v-if="charged">
                             <h1>{{ville}}</h1>
+                            <a href="index.html">
+                                <button class="btn btn-danger">Retour</button>
+                            </a>
                             <a :href="idSerieUrl">
                                 <button class="btn btn-primary">Ajouter une photos</button>
                             </a>                            
@@ -99,9 +102,10 @@
                 // Supprimer une photo d'une série
                 // id = id de la photo
                 let getClass = this;
-                axios.delete("https://back-geoquizzatelier.pagekite.me/photos/" + id);
-                getClass.charged = false
-                this.getSerieWithPhotos(this.idSerie);
+                axios.delete("https://back-geoquizzatelier.pagekite.me/photos/" + id).then(() => {
+                    getClass.charged = false
+                    this.getSerieWithPhotos(this.idSerie);
+                });
             },
             getSerieWithPhotos(id) {
                 // Recupère la liste des photos en fonction de l'id de la série passé en paramètre dans l'url

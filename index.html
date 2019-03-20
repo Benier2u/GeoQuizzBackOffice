@@ -6,35 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <!--[if IE]>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<![endif]-->
     <title>GeoQuizz</title>
-    <!-- BOOTSTRAP CORE CSS -->
     <link href="assets/css/bootstrap.css" rel="stylesheet" />
-    <!-- ION ICONS STYLES -->
     <link href="assets/css/ionicons.css" rel="stylesheet" />
-    <!-- FONT AWESOME ICONS STYLES -->
     <link href="assets/css/font-awesome.css" rel="stylesheet" />
-    <!-- FANCYBOX POPUP STYLES -->
     <link href="assets/js/source/jquery.fancybox.css" rel="stylesheet" />
-    <!-- STYLES FOR VIEWPORT ANIMATION -->
     <link href="assets/css/animations.min.css" rel="stylesheet" />
-    <!-- CUSTOM CSS -->
     <link href="assets/css/style-solid-black.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>
-    <script src="vue.js"></script>
+    <script src="assets/js/jquery-1.11.1.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/vegas/jquery.vegas.min.js"></script>
+    <script src="assets/js/jquery.easing.min.js"></script>
+    <script src="assets/js/source/jquery.fancybox.js"></script>
+    <script src="assets/js/jquery.isotope.js"></script>
+    <script src="assets/js/appear.min.js"></script>
+    <script src="assets/js/animations.min.js"></script>
+    <script src="assets/js/custom-solid.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <!-- HTML5 Shiv and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
+    <script src="vue-component.js"></script>
 </head>
 
 <body data-spy="scroll" data-target="#menu-section">
-    <!--MENU SECTION START-->
     <div id="application">
         <div class="navbar navbar-inverse navbar-fixed-top scroll-me" id="menu-section">
             <div class="container">
@@ -50,94 +43,45 @@
                 </div>
             </div>
         </div>
-        <!--MENU SECTION END-->
-        <!--HOME SECTION START-->
+
         <div id="home">
             <div class="container">
                 <div class="row">
                     <div class="row animate-in" data-anim-type="fade-in-up">
-                        <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-8 col-lg-offset-2 scroll-me">
-                            <h1>Bienvenue le contrôleur GeoQuizz !</h1>
-                            <div id="form">
-                                <div style="margin: 50px;">
-                                    <label for="name">Identifiant : </label>
-                                    <input type="text" id="username" style="color: black" required>
-                                </div>
-                                <div style="margin: 50px;">
-                                    <label for="name">Mot de passe : </label>
-                                    <input type="password" id="password" style="color: black" required>
-                                </div>
-                                <div class="button">
-                                    <button type="submit" v-on:click="login" class="btn button-custom btn-custom-two">Connexion</button>
-                                </div>
-                            </div>
-                        </div>  
+                        <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-8 col-lg-offset-2 scroll-me" v-if="charged">
+                            <h1>Serie !</h1>
+                            <div class="card-group">
+                                <cardseries v-for="serie in tableOfSeries" :serie="serie"></cardseries>
+                            </div>  
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div>    
+</body>
 
-    <!--CONTACT SECTION END-->
-
-    <!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME -->
-    <!-- CORE JQUERY -->
-    <script src="assets/js/jquery-1.11.1.js"></script>
-    <!-- BOOTSTRAP SCRIPTS -->
-    <script src="assets/js/bootstrap.js"></script>
-    <!-- EASING SCROLL SCRIPTS PLUGIN -->
-    <script src="assets/js/vegas/jquery.vegas.min.js"></script>
-    <!-- VEGAS SLIDESHOW SCRIPTS -->
-    <script src="assets/js/jquery.easing.min.js"></script>
-    <!-- FANCYBOX PLUGIN -->
-    <script src="assets/js/source/jquery.fancybox.js"></script>
-    <!-- ISOTOPE SCRIPTS -->
-    <script src="assets/js/jquery.isotope.js"></script>
-    <!-- VIEWPORT ANIMATION SCRIPTS   -->
-    <script src="assets/js/appear.min.js"></script>
-    <script src="assets/js/animations.min.js"></script>
-    <!-- CUSTOM SCRIPTS -->
-    <script src="assets/js/custom-solid.js"></script>
-    <!-- AXIOS SCRIPTS -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-    <script>
+<script>
         var game = new Vue({
             el: "#application",
             data: {
-
+                tableOfSeries: [],
+                charged: false
             },
             methods: {
-                login() {
-                    var username = document.getElementById("username").value
-                    var password = document.getElementById("password").value
 
-                    let formData = new FormData();
-                    formData.append("password", password);
-                    formData.append("username", username);
-
-                    axios
-                        .post("http://back-geoquizzatelier.pagekite.me/login"
-                        ,formData, {
-                            headers: {
-                                "Content-Type": "application/x-www-form-urlencoded",
-                            }
-                        })
-                        .then((response) => {
-                            console.log(response)
-                        });
-                }
             }, 
             created() {
-
+                let getClass = this;
+                axios.get("https://back-geoquizzatelier.pagekite.me/series")
+                .then((response) => {
+                    getClass.tableOfSeries = response.data
+                    getClass.charged = true
+                });
             }
         })
+
+
     </script>
-
-
-
-
-
-</body>
 
 </html>
