@@ -85,8 +85,19 @@
                     <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-8 col-lg-offset-2 scroll-me">
 
                         <h1>Tableau de bord</h1>
-                        <input type="file" id="inImg" accept="image/*">
-                        <button v-on:click="uploadImage()">ntm</button>
+                        
+                            <div class="form-group">
+                              <label>Choisir Image</label>
+                              <input type="file" id="inImg" accept="image/*">
+                              <small id="emailHelp" class="form-text text-muted">Selectionnez une image à vendre.</small>
+                            </div>
+                            <div class="form-group">
+                              <label>Coordonnée X</label>
+                              <input type="text" step="0.0001" class="form-control" v-model="coordX" placeholder="X">
+                              <label>Coordonnée Y</label>
+                              <input type="text" step="0.0001" class="form-control" v-model="coordY" placeholder="Y">
+                            </div>
+                            <button v-on:click="uploadImage()" class="btn btn-primary">Submit</button>
                     </div>
                 </div>
             </div>
@@ -106,13 +117,17 @@
                 id: "",
                 password: "",
                 base64: "",
-                imageDefine: false
+                imageDefine: false,
+                coordX: "",
+                coordY: ""
             },
             methods: {
                 uploadImage() {
-                    console.log(this.imageDefine)
-                    if (this.imageDefine == false) {
+                    if (this.imageDefine == false ) {
                         alert("Veuillez selectionner une image")
+                        
+                    } else if(isNaN(this.coordX) || isNaN(this.coordY)) {
+                        alert("Veuillez rentrer des coordonnées valide")
                     } else {
                         var xhr = new XMLHttpRequest();
                         let formdata = new FormData();
@@ -128,21 +143,22 @@
                         xhr.open('POST', upload_url);
                         xhr.onload = (response) => {
                             let x = JSON.parse(xhr.responseText);
-                            console.log(response);
                             // callback(JSON.parse(xhr._response)); // this line is the response call back to your request!!!!
                             // callback(JSON.parse(xhr.response)); // this line is the response call back to your request!!!!
                             axios
-                                .get(this.config + "series/")
+                                .get("http://back-geoquizzatelier.pagekite.me/series/")
                                 .then(response => {
                                     var id = "3ce141a0-2354-49b5-9d26-66e198f8d486";
                                     axios
-                                        .post(this.config + "series/" + id + "/photos", {
+                                        .post("http://back-geoquizzatelier.pagekite.me/series/" + id + "/photos", {
                                             description: "lol",
-                                            position: "",
+                                            position: this.coordX+" "+this.coordY,
+                                            
                                             id: x.public_id,
                                         })
-                                        .then(response => { })
+                                        .then()
                                         .catch(e => {
+
                                             this.errors.push(e);
                                         });
                                 })
@@ -156,23 +172,16 @@
                         xhr.send(formdata);
                     }
                 },
-            }, created() {
+            }, mounted() {
                 var that = this;
-                var inputFile =  document.getElementById("inImg")
-                inputFile.addEventListener('change', function () {
+                document.getElementById("inImg").addEventListener('change', function () {
                     var reader = new FileReader()
-                    reader.readAsDataURL(inputFile.files[0]);
+                    reader.readAsDataURL(document.getElementById("inImg").files[0]);
                     reader.addEventListener('load', function () {
                         that.base64 = reader.result
                         that.imageDefine = true;
                     })
-
-
                 });
-
-                document.getElementsByTagName('body')[0].appendChild(inputFile)
-
-                
             }
         })
 
