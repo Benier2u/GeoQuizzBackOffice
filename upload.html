@@ -64,6 +64,8 @@
                               <label>Choisir Image</label>
                               <input type="file" id="inImg" accept="image/*">
                               <small id="emailHelp" class="form-text text-muted">Selectionnez une image à ajouter.</small>
+                              <label>Description</label>
+                              <input type="text" class="form-control" v-model="desc" placeholder="...">
                             </div>
                             <div class="form-group">
                               <label>Coordonnée X</label>
@@ -95,14 +97,16 @@
                 imageDefine: false,
                 idSerie: "",
                 coordX: "",
-                coordY: ""
+                coordY: "",
+                desc: ""
             },
             methods: {
                 uploadImage() {
                     var getClass = this;
                     if (this.imageDefine == false) {
                         alert("Veuillez selectionner une image")
-                        
+                    } else if(this.desc == "") {
+                        alert("Veuillez entrer une description")
                     } else if(isNaN(this.coordX) || isNaN(this.coordY)) {
                         alert("Veuillez rentrer des coordonnées valide")
                     } else {
@@ -122,11 +126,14 @@
                             let x = JSON.parse(xhr.responseText);
                             axios
                             .post("http://back-geoquizzatelier.pagekite.me/series/" + getClass.idSerie + "/photos", {
-                                description: "lol",
+                                description: this.desc,
                                 position: this.coordX+" "+this.coordY,
                                 id: x.public_id,
                             })
-                            .then()
+                            .then(() => {
+                                alert("Photo upload !");
+                                document.location.href="photos.html?serie="+this.idSerie
+                            })
                             .catch(e => {
                             });
                         };
