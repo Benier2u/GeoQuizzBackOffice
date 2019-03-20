@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>GeoQuizz</title>
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <link href="assets/css/ionicons.css" rel="stylesheet" />
+    <link href="assets/css/font-awesome.css" rel="stylesheet" />
+    <link href="assets/js/source/jquery.fancybox.css" rel="stylesheet" />
+    <link href="assets/css/animations.min.css" rel="stylesheet" />
+    <link href="assets/css/style-solid-black.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>
+    <script src="assets/js/jquery-1.11.1.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/vegas/jquery.vegas.min.js"></script>
+    <script src="assets/js/jquery.easing.min.js"></script>
+    <script src="assets/js/source/jquery.fancybox.js"></script>
+    <script src="assets/js/jquery.isotope.js"></script>
+    <script src="assets/js/appear.min.js"></script>
+    <script src="assets/js/animations.min.js"></script>
+    <script src="assets/js/custom-solid.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="vue-component.js"></script>
+</head>
+
+<body data-spy="scroll" data-target="#menu-section">
+    <div id="application">
+        <div class="navbar navbar-inverse navbar-fixed-top scroll-me" id="menu-section">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <p class="navbar-brand">
+                        GEOQUIZZ
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="home">
+            <div class="container">
+                <div class="row">
+                    <div class="row animate-in" data-anim-type="fade-in-up">
+                        <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-8 col-lg-offset-2 scroll-me" v-if="charged">
+                            <h1>Serie !</h1>
+                            <div class="card-group">
+                                <cardseries v-for="serie in tableOfSeries" :serie="serie"></cardseries>
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</body>
+
+<script>
+        var game = new Vue({
+            el: "#application",
+            data: {
+                tableOfSeries: [],
+                charged: false
+            },
+            methods: {
+
+            }, 
+            created() {
+                let getClass = this;
+                axios.get("https://back-geoquizzatelier.pagekite.me/series")
+                .then((response) => {
+                    getClass.tableOfSeries = response.data
+                    getClass.charged = true
+                });
+            }
+        })
+
+
+    </script>
+
+</html>
